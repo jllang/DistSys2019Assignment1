@@ -1,0 +1,95 @@
+/**
+ * This property shouldn't hold in the model, and it's used as a sanity check:
+ */
+/*
+ltl atLeastOneWinnerPerRound
+{
+    [](Referee@roundEnds -> (results[0] == WIN || results[1] == WIN || results[2] == WIN))
+}
+*/
+
+/**
+ * This property asserts that there can be at most one winner per round:
+ */
+ltl atMostOneWinnerPerRound
+{
+    [](Referee@roundEnds -> 
+           (results[0] == WIN && results[1] != WIN && results[2] != WIN)
+        || (results[0] != WIN && results[1] == WIN && results[2] != WIN)
+        || (results[0] != WIN && results[1] != WIN && results[2] == WIN)
+        || (results[0] != WIN && results[1] != WIN && results[2] != WIN))
+}
+
+/**
+ * This property asserts that eventually the game ends, and when it does, there
+ * can be at most one winner overall. (We'd need CTL to express that each player
+ * has a chance to win, i.e. for each player, there exists an execution which
+ * ends with the player winning.)
+ */
+ltl atMostOneWinnerOverall
+{
+    !Referee@gameEnds U (outcome == P1WIN
+                      || outcome == P2WIN
+                      || outcome == P3WIN 
+                      || outcome == INCONCLUSIVE)
+}
+
+/**
+ * This property should fail in the model, meaning that there exists an
+ * execution, where player one wins, meaning that player one has a fair chance
+ * at winning.
+ */
+ltl playerOneNeverWins
+{
+    [](outcome != P1WIN)
+}
+
+/**
+ * This property should fail in the model, meaning that there exists an
+ * execution, where player two wins, meaning that player two has a fair chance
+ * at winning.
+ */
+ltl playerTwoNeverWins
+{
+    [](outcome != P2WIN)
+}
+
+/**
+ * This property should fail in the model, meaning that there exists an
+ * execution, where player three wins, meaning that player three has a fair
+ * chance at winning.
+ */
+ltl playerThreeNeverWins
+{
+    [](outcome != P3WIN)
+}
+
+/**
+ * If players have same play, they should have the same result:
+ */
+ltl samePlayMeansSameResult
+{
+    [](Referee@roundEnds -> 
+        (   (players[0] == players[1] -> results[0] == results[1])
+         && (players[1] == players[2] -> results[1] == results[2])
+         && (players[0] == players[2] -> results[0] == results[2])))
+}
+
+/**
+ * If all players time out or if there is a cyclic play (any permutation of
+ * ROCK, PAPER, and SCISSORS), then the result of that round will be
+ * inconclusive for all players. Otherwise, none of the results may be
+ * inconclusive.
+ */
+ltl conclusiveness
+{
+    [](Referee@roundEnds -> 
+        (( rocks + papers + scissors == 0 /* Everybody times out */
+        || (rocks == 1 && papers == 1 && scissors == 1)) -> /* Cyclic play */
+            (   results[0] == INCONCLUSIVE 
+             && results[1] == INCONCLUSIVE
+             && results[2] == INCONCLUSIVE))
+        ||  (   results[0] != INCONCLUSIVE 
+             && results[1] != INCONCLUSIVE
+             && results[2] != INCONCLUSIVE))
+}
