@@ -46,7 +46,7 @@ byte scissors; /* Number of scissors played in a round. */
 inline compare(pa, pb, ca, cb)
 {
     if
-    ::  pa - pb != 0 ->
+    ::  pa != pb ->
             if
             ::  pa == ROCK     && pb == PAPER    -> cb++
             ::  pa == ROCK     && pb == SCISSORS -> ca++
@@ -54,9 +54,8 @@ inline compare(pa, pb, ca, cb)
             ::  pa == PAPER    && pb == SCISSORS -> cb++
             ::  pa == SCISSORS && pb == ROCK     -> cb++
             ::  pa == SCISSORS && pb == PAPER    -> ca++
-            ::  pa == TIMEOUT  && pb == TIMEOUT  -> skip
-            ::  pa == TIMEOUT  && pb != TIMEOUT  -> cb++
-            ::  pa != TIMEOUT  && pb == TIMEOUT  -> ca++
+            ::  pa == TIMEOUT -> cb++
+            ::  pb == TIMEOUT -> ca++
             fi
     ::  else -> skip
     fi
