@@ -26,3 +26,5 @@ hs_err_pid*
 *.trail
 pan*
 _spin_nvr.tmp
+
+__pycache__
