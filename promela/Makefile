@@ -3,6 +3,8 @@ separator = ====================================================================
 build:
 	spin -a model.pml                                                    && \
 	gcc -o pan pan.c                                                     && \
+	echo "\n$(separator)\n"                                              && \
+	./pan -a -n -N everyRoundEndsEventually -w26                         && \
 #	echo "\n$(separator)\n"                                              && \
 #	./pan -a -n -N atLeastOneWinnerPerRound                              && \
 	echo "\n$(separator)\n"                                              && \
@@ -18,4 +20,10 @@ build:
 	echo "\n$(separator)\n"                                              && \
 	./pan -a -n -N samePlayMeansSameResult                                && \
 	echo "\n$(separator)\n"                                              && \
-	./pan -a -n -N conclusiveness
+	./pan -a -n -N conclusiveness                                        && \
+	echo "\n$(separator)\n"                                              && \
+	./pan -a -n -N p1p2classical                                         && \
+	echo "\n$(separator)\n"                                              && \
+	./pan -a -n -N p1p3classical                                         && \
+	echo "\n$(separator)\n"                                              && \
+	./pan -a -n -N p2p3classical

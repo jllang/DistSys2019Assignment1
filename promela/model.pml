@@ -146,7 +146,7 @@ proctype Referee()
     byte d2;     /* Number of wins for player 2 per round. */
     byte d3;     /* Number of wins for player 3 per round. */
     do
-    ::  i < 6 -> printf("Round %d:\n", i);
+    ::  i < 6 -> roundStarts: printf("Round %d:\n", i);
                  d_step /* Synchronisation barrier */
                  {
                      rocks    = 0;
@@ -204,12 +204,6 @@ proctype Referee()
 
 init
 {
-    d_step
-    {
-        play[0] = false;
-        play[1] = false;
-        play[2] = false;
-    }
     run Player(0); /* Player 1. */
     run Player(1); /* Player 2. */
     run Player(2); /* Player 3. */

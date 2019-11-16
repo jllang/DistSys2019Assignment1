@@ -9,7 +9,15 @@ ltl atLeastOneWinnerPerRound
 */
 
 /**
- * This property asserts that there can be at most one winner per round:
+ * This property asserts that every round ends eventually (one way or another).
+ */
+ltl everyRoundEndsEventually
+{
+    [](Referee@roundStarts -> <>(Referee@roundEnds))
+}
+
+/**
+ * This property asserts that every round has at most one winner:
  */
 ltl atMostOneWinnerPerRound
 {
@@ -28,10 +36,11 @@ ltl atMostOneWinnerPerRound
  */
 ltl atMostOneWinnerOverall
 {
-    !Referee@gameEnds U (outcome == P1WIN
-                      || outcome == P2WIN
-                      || outcome == P3WIN 
-                      || outcome == INCONCLUSIVE)
+    [](!Referee@gameEnds U 
+        (outcome == P1WIN 
+        || outcome == P2WIN 
+        || outcome == P3WIN 
+        || outcome == INCONCLUSIVE))
 }
 
 /**
@@ -92,4 +101,36 @@ ltl conclusiveness
         ||  (   results[0] != INCONCLUSIVE 
              && results[1] != INCONCLUSIVE
              && results[2] != INCONCLUSIVE))
+}
+
+/**
+ * This macro property asserts that if player c times out and players a and b
+ * don't, then the game between players a and b becomes essentially the
+ * classical rock-paper-scissors game for two players.
+ */
+#define collapseToClassical(a, b, c)                                           \
+    ((players[c] == TIMEOUT) ->                                                \
+        ((players[a] == players[b] -> results[a] == results[b])                \
+        || ((  (players[a] == ROCK     && players[b] == PAPER)                 \
+            || (players[a] == PAPER    && players[b] == SCISSORS)              \
+            || (players[a] == SCISSORS && players[b] == ROCK))                 \
+                -> (results[a] == LOSE && results[b] == WIN))                  \
+        || ((  (players[b] == ROCK     && players[a] == PAPER)                 \
+            || (players[b] == PAPER    && players[a] == SCISSORS)              \
+            || (players[b] == SCISSORS && players[a] == ROCK))                 \
+                -> (results[b] == LOSE && results[a] == WIN))))
+
+ltl p1p2classical
+{
+    [](Referee@roundEnds -> collapseToClassical(0, 1, 2))
+}
+
+ltl p1p3classical
+{
+    [](Referee@roundEnds -> collapseToClassical(0, 2, 1))
+}
+
+ltl p2p3classical
+{
+    [](Referee@roundEnds -> collapseToClassical(1, 2, 0))
 }

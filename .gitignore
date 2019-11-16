@@ -23,6 +23,6 @@
 hs_err_pid*
 
 # Spin temporary files etc.
-promela/*.trail
-promela/pan*
-promela/_spin_nvr.tmp
+*.trail
+pan*
+_spin_nvr.tmp
