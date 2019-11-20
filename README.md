@@ -27,5 +27,5 @@ Following Tasks:
 2. - Fixing current python impelmentation issues to finalize the game for 2 palyers(Suravi)
    - Updating the client for 3 palyers(Suravi)
    
-3. Report: We expect Rola can do it. 
+3. - Writing the report: (Rola, John [Design section]). 
 
