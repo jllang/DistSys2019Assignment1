@@ -1,9 +1,9 @@
 import socket
 from _thread import *
 import pickle
-from game import Game
+from game import Game, Play, Outcome, stringToPlay, stringToOutcome
 
-server = "" 
+server = "127.0.0.1"
 port = 5555
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -21,7 +21,7 @@ games = {}
 idCount = 0
 
 
-def threaded_client(conn, p, gameId):
+def server_thread(conn, p, gameId):
     global idCount
     conn.send(str.encode(str(p)))
 
@@ -37,9 +37,9 @@ def threaded_client(conn, p, gameId):
                     break
                 else:
                     if data == "reset":
-                        game.resetWent()
+                        game.resetPlayed()
                     elif data != "get":
-                        game.play(p, data)
+                        game.play(p, stringToPlay(data))
 
                     conn.sendall(pickle.dumps(game))
             else:
@@ -72,5 +72,4 @@ while True:
         games[gameId].ready = True
         p = 1
 
-
-    start_new_thread(threaded_client, (conn, p, gameId))
+    start_new_thread(server_thread, (conn, p, gameId))

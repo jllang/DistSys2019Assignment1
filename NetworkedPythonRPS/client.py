@@ -1,6 +1,7 @@
 import pygame
 from network import Network
 import pickle
+import game
 pygame.font.init()
 
 width = 700
@@ -50,20 +51,20 @@ def redrawWindow(win, game, p):
 
         move1 = game.get_player_move(0)
         move2 = game.get_player_move(1)
-        if game.bothWent():
+        if game.everyonePlayed():
             text1 = font.render(move1, 1, (0,0,0))
             text2 = font.render(move2, 1, (0, 0, 0))
         else:
-            if game.p1Went and p == 0:
+            if game.played[0] and p == 0:
                 text1 = font.render(move1, 1, (0,0,0))
-            elif game.p1Went:
+            elif game.played[0]:
                 text1 = font.render("Locked In", 1, (0, 0, 0))
             else:
                 text1 = font.render("Waiting...", 1, (0, 0, 0))
 
-            if game.p2Went and p == 1:
+            if game.played[1] and p == 1:
                 text2 = font.render(move2, 1, (0,0,0))
-            elif game.p2Went:
+            elif game.played[1]:
                 text2 = font.render("Locked In", 1, (0, 0, 0))
             else:
                 text2 = font.render("Waiting...", 1, (0, 0, 0))
@@ -98,7 +99,7 @@ def main():
             print("Couldn't get game")
             break
 
-        if game.bothWent():
+        if game.everyonePlayed():
             redrawWindow(win, game, player)
             pygame.time.delay(500)
             try:
@@ -130,10 +131,13 @@ def main():
                 for btn in btns:
                     if btn.click(pos) and game.connected():
                         if player == 0:
-                            if not game.p1Went:
+                            if not game.played[0]:
+                                n.send(btn.text)
+                        elif player == 1:
+                            if not game.played[1]:
                                 n.send(btn.text)
                         else:
-                            if not game.p2Went:
+                            if not game.played[2]:
                                 n.send(btn.text)
 
         redrawWindow(win, game, player)
