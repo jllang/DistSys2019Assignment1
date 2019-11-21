@@ -2,7 +2,7 @@ import socket
 from _thread import *
 import pickle
 from game import Game
-
+# Here we determine the IP address of the server and the TCP port for the communication
 server = "127.0.0.1"
 port = 5555
 
