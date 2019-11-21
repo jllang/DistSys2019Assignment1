@@ -46,11 +46,11 @@ def redrawWindow(win, game, p):
 
     # checking if both player are connected or not
     if not(game.connected()):
-        font = pygame.font.SysFont("Open Sans", 60)
+        font = pygame.font.SysFont("Open Sans", 50)
         text = font.render("Waiting for another Player...", 1, (0, 5, 55), True)
         win.blit(text, (width/2 - text.get_width()/2, height/2 - text.get_height()/2))
     else:
-        font = pygame.font.SysFont("Open Sans", 60)
+        font = pygame.font.SysFont("Open Sans", 40)
         text = font.render("Your Move", 1, (0, 5, 55))
         win.blit(text, (60, 200))
 
@@ -165,9 +165,11 @@ def menu_screen():
     while run:
         clock.tick(60)
         win.fill(aqua)
-        font = pygame.font.SysFont("Open Sans", 55)
-        text = font.render("Welcome to the game. Click to play :)", 1, (0, 5, 55))
-        win.blit(text, (20,200))
+        font = pygame.font.SysFont("Open Sans", 45)
+        text1 = font.render("Welcome to the game!", 1, (0, 5, 55))
+        text2 = font.render("Click to play :)", 1, (0, 5, 55))
+        win.blit(text1, (110,200))
+        win.blit(text2, (220,300))
         pygame.display.update()
 
         for event in pygame.event.get():

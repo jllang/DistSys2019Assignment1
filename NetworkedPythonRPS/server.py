@@ -5,7 +5,7 @@ from game import Game
 
 # creating the server and the port
 # server's IP address
-server = "192.168.43.253"
+server = "127.0.0.1"
 port = 5555
 
 # creating the socket(socket type, stream)
