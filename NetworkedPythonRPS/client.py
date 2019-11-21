@@ -1,12 +1,20 @@
 import pygame
 from network import Network
 import pickle
+import time
 pygame.font.init()
+
+
+white = [255, 255, 255]
+red = [255, 0, 0]
+aqua = [150, 255, 255]
+grey = [128,128,128]
 
 width = 700
 height = 700
 win = pygame.display.set_mode((width, height))
-pygame.display.set_caption("Client")
+pygame.display.set_caption("CLIENT")
+
 
 
 class Button:
@@ -20,7 +28,7 @@ class Button:
 
     def draw(self, win):
         pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.height))
-        font = pygame.font.SysFont("comicsans", 40)
+        font = pygame.font.SysFont("Open Sans", 40)
         text = font.render(self.text, 1, (255,255,255))
         win.blit(text, (self.x + round(self.width/2) - round(text.get_width()/2), self.y + round(self.height/2) - round(text.get_height()/2)))
 
@@ -34,19 +42,20 @@ class Button:
 
 
 def redrawWindow(win, game, p):
-    win.fill((128,128,128))
+    win.fill(aqua)
 
+    # checking if both player are connected or not
     if not(game.connected()):
-        font = pygame.font.SysFont("comicsans", 80)
-        text = font.render("Waiting for Player...", 1, (255,0,0), True)
+        font = pygame.font.SysFont("Open Sans", 60)
+        text = font.render("Waiting for another Player...", 1, (0, 5, 55), True)
         win.blit(text, (width/2 - text.get_width()/2, height/2 - text.get_height()/2))
     else:
-        font = pygame.font.SysFont("comicsans", 60)
-        text = font.render("Your Move", 1, (0, 255,255))
-        win.blit(text, (80, 200))
+        font = pygame.font.SysFont("Open Sans", 60)
+        text = font.render("Your Move", 1, (0, 5, 55))
+        win.blit(text, (60, 200))
 
-        text = font.render("Opponents", 1, (0, 255, 255))
-        win.blit(text, (380, 200))
+        text = font.render("Opponent's move", 1, (0, 5, 55))
+        win.blit(text, (320, 200))
 
         move1 = game.get_player_move(0)
         move2 = game.get_player_move(1)
@@ -81,10 +90,13 @@ def redrawWindow(win, game, p):
     pygame.display.update()
 
 
-btns = [Button("Rock", 50, 500, (0,0,0)), Button("Scissors", 250, 500, (255,0,0)), Button("Paper", 450, 500, (0,255,0))]
+#btns = [Button("Rock", 50, 500, (0,0,0)), Button("Scissors", 250, 500, (255,0,0)), Button("Paper", 450, 500, (0,255,0))]
+btns = [Button("Rock", 50, 500, (0,5,55)), Button("Scissors", 250, 500, (0,90,55)), Button("Paper", 450, 500, (0,175,55))]
 def main():
     run = True
     clock = pygame.time.Clock()
+
+    # creating connection with the network
     n = Network()
     player = int(n.getP())
     print("You are player", player)
@@ -92,15 +104,18 @@ def main():
     while run:
         clock.tick(60)
         try:
+            # getting game frame
             game = n.send("get")
         except:
+            # if we don't get a response from the server
             run = False
             print("Couldn't get game")
             break
 
         if game.bothWent():
             redrawWindow(win, game, player)
-            pygame.time.delay(500)
+            #pygame.time.delay(3000)
+            pygame.time.wait(1000)
             try:
                 game = n.send("reset")
             except:
@@ -108,18 +123,23 @@ def main():
                 print("Couldn't get game")
                 break
 
-            font = pygame.font.SysFont("comicsans", 90)
+            font = pygame.font.SysFont("Open Sans", 90)
             if (game.winner() == 1 and player == 1) or (game.winner() == 0 and player == 0):
+                print("You won")
                 text = font.render("You Won!", 1, (255,0,0))
             elif game.winner() == -1:
                 text = font.render("Tie Game!", 1, (255,0,0))
+                print("It was a tie")
             else:
                 text = font.render("You Lost...", 1, (255, 0, 0))
+                print("You Lost")
 
             win.blit(text, (width/2 - text.get_width()/2, height/2 - text.get_height()/2))
             pygame.display.update()
-            pygame.time.delay(2000)
+            #pygame.time.delay(8000)
+            pygame.time.wait(2000)
 
+        # sending the inout of the players to the network
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
@@ -144,10 +164,10 @@ def menu_screen():
 
     while run:
         clock.tick(60)
-        win.fill((128, 128, 128))
-        font = pygame.font.SysFont("comicsans", 60)
-        text = font.render("Click to Play!", 1, (255,0,0))
-        win.blit(text, (100,200))
+        win.fill(aqua)
+        font = pygame.font.SysFont("Open Sans", 55)
+        text = font.render("Welcome to the game. Click to play :)", 1, (0, 5, 55))
+        win.blit(text, (20,200))
         pygame.display.update()
 
         for event in pygame.event.get():
